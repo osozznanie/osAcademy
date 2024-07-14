@@ -17,22 +17,6 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 @RequiredArgsConstructor
 public class ApplicationConfig {
 
-    private final UserRepository repository;
-
-    @Bean
-    public AuthenticationEntryPoint authenticationEntryPoint() {
-        return (request, response, authException) -> {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.setContentType("application/json");
-            ApiError apiError = ApiError.builder()
-                .description("Please log in to access this resource")
-                .path(request.getRequestURI())
-                .build();
-            String jsonResponse = objectMapper().writeValueAsString(apiError);
-            response.getWriter().write(jsonResponse);
-        };
-    }
-
     @Bean
     public ObjectMapper objectMapper() {
         ObjectMapper mapper = new ObjectMapper();

@@ -5,13 +5,21 @@ import com.school.osacademy.dto.response.UserDto;
 import java.util.List;
 
 public interface UserService {
+
     UserDto createUser(CreateUserDto createUserDto);
+
     UserDto getUserByEmail(String email);
+
     List<UserDto> getAllUsers();
+
     void deleteUserByEmail(String email);
+
     boolean subscribeUser(String email);
+
     boolean unsubscribeUser(String email);
+
     boolean verifyUser(String email);
+
     boolean unverifyUser(String email);
 
     //TODO use these methods in the future

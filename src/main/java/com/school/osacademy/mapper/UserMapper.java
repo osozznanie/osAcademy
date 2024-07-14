@@ -2,6 +2,7 @@ package com.school.osacademy.mapper;
 
 import com.school.osacademy.dto.request.CreateUserDto;
 import com.school.osacademy.dto.response.UserDto;
+import com.school.osacademy.enums.ERole;
 import com.school.osacademy.model.User;
 import org.springframework.stereotype.Component;
 
@@ -37,23 +38,13 @@ public class UserMapper {
     }
 
     public User toUserFromRequest(CreateUserDto userDto) {
-          return User.builder()
-            .name(userDto.getName())
+        return User.builder()
+//            .name(userDto.getName())
             .email(userDto.getEmail())
-            .role(userDto.getRole())
-            .isSubscribed(userDto.isSubscribed())
-            .avatar(userDto.getAvatar())
+            .password(userDto.getPassword())
+            .role(ERole.USER)
+            .isSubscribed(false)
+//            .avatar(userDto.getAvatar())
             .build();
     }
-
-    public UserDto toUserDtoFromRequest(CreateUserDto userDto) {
-        return UserDto.builder()
-            .name(userDto.getName())
-            .email(userDto.getEmail())
-            .role(userDto.getRole())
-            .isSubscribed(userDto.isSubscribed())
-            .avatar(userDto.getAvatar())
-            .build();
-    }
-
 }
