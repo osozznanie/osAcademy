@@ -1,8 +1,10 @@
 package com.school.osacademy.mapper;
 
 import com.school.osacademy.dto.request.CreateUserDto;
+import com.school.osacademy.dto.response.RegisterResponseDto;
 import com.school.osacademy.dto.response.UserDto;
 import com.school.osacademy.enums.ERole;
+import com.school.osacademy.enums.RegisterStatus;
 import com.school.osacademy.model.User;
 import org.springframework.stereotype.Component;
 

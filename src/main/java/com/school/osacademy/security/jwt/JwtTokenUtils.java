@@ -2,19 +2,19 @@ package com.school.osacademy.security.jwt;
 
 import com.school.osacademy.model.User;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import java.util.Date;
 import java.util.function.Function;
-import javax.crypto.spec.SecretKeySpec;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-@Service
+@Component
 public class JwtTokenUtils {
 
-    private final String secretKey;
-    private final long validityInMilliseconds;
+    private String secretKey;
+    private long validityInMilliseconds;
 
     public JwtTokenUtils(@Value("${jwt.secret-key}") String secretKey,
                          @Value("${jwt.token.expiration}") long validityInMilliseconds) {
@@ -26,16 +26,22 @@ public class JwtTokenUtils {
         return Jwts.builder()
             .setSubject(user.getEmail())
             .claim("role", user.getRole().name())
-            .claim("name", user.getName())
             .setIssuedAt(new Date())
             .setExpiration(new Date(new Date().getTime() + validityInMilliseconds))
-            .signWith(new SecretKeySpec(secretKey.getBytes(), SignatureAlgorithm.HS512.getJcaName()),
-                SignatureAlgorithm.HS512)
+            .signWith(SignatureAlgorithm.HS512, secretKey)
             .compact();
     }
 
-    public String getUserEmailFromToken(String token) {
+    public String getUsernameFromToken(String token) {
         return getClaimFromToken(token, Claims::getSubject);
+    }
+
+    public String getRoleFromToken(String token) {
+        return getClaimFromToken(token, claims -> claims.get("role", String.class));
+    }
+
+    public Date getExpirationDateFromToken(String token) {
+        return getClaimFromToken(token, Claims::getExpiration);
     }
 
     public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
@@ -44,16 +50,20 @@ public class JwtTokenUtils {
     }
 
     private Claims getAllClaimsFromToken(String token) {
-        return Jwts.parserBuilder()
-            .setSigningKey(secretKey.getBytes())
-            .build()
-            .parseClaimsJws(token)
-            .getBody();
+        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody();
     }
 
-    public boolean validateToken(String token, String userEmail) {
-        String emailFromToken = this.getAllClaimsFromToken(token).getSubject();
-        return emailFromToken.equals(userEmail);
+    private Boolean isTokenExpired(String token) {
+        final Date expiration = getExpirationDateFromToken(token);
+        return expiration.before(new Date());
     }
 
+    public Boolean validateToken(String token) {
+        try {
+            Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
+            return true;
+        } catch (JwtException e) {
+            return false;
+        }
+    }
 }

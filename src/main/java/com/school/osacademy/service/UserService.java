@@ -1,12 +1,17 @@
 package com.school.osacademy.service;
 
 import com.school.osacademy.dto.request.CreateUserDto;
+import com.school.osacademy.dto.request.LoginUserDto;
+import com.school.osacademy.dto.response.LoginResponseDto;
+import com.school.osacademy.dto.response.RegisterResponseDto;
 import com.school.osacademy.dto.response.UserDto;
 import java.util.List;
 
 public interface UserService {
 
-    UserDto createUser(CreateUserDto createUserDto);
+    RegisterResponseDto createUser(CreateUserDto createUserDto);
+
+    LoginResponseDto loginUser(LoginUserDto loginUserDto);
 
     UserDto getUserByEmail(String email);
 

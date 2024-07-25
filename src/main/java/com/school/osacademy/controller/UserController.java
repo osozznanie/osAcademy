@@ -1,8 +1,12 @@
 package com.school.osacademy.controller;
 
 import com.school.osacademy.dto.request.CreateUserDto;
+import com.school.osacademy.dto.request.LoginUserDto;
+import com.school.osacademy.dto.response.LoginResponseDto;
+import com.school.osacademy.dto.response.RegisterResponseDto;
 import com.school.osacademy.dto.response.UserDto;
 import com.school.osacademy.mapper.UserMapper;
+import com.school.osacademy.model.User;
 import com.school.osacademy.service.UserService;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -34,32 +38,24 @@ public class UserController {
     private final UserService userService;
     private final UserMapper userMapper;
 
-    @PostMapping
-    public ResponseEntity<?> createUser(@RequestBody @Valid CreateUserDto createUserDto) {
-        try {
-            createUserDto.setPassword(
-                new BCryptPasswordEncoder().encode(createUserDto.getPassword())
-            );
-            UserDto userDto = userService.createUser(createUserDto);
-            return ResponseEntity.status(HttpStatus.CREATED).body(userDto);
-        } catch (DataIntegrityViolationException e) {
-            // Это исключение может быть вызвано дублированием записи
-            return ResponseEntity
-                .status(HttpStatus.CONFLICT)
-                .body("User with this email already exists.");
-        } catch (Exception e) {
-            // Обработка других возможных исключений
-            return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("An error occurred while creating the user.");
-        }
+    @PostMapping("/register")
+    public ResponseEntity<RegisterResponseDto> createUser(@RequestBody CreateUserDto createUserDto) {
+        RegisterResponseDto response = userService.createUser(createUserDto);
+        return switch (response.getRegisterStatus()) {
+            case SUCCESS -> ResponseEntity.status(HttpStatus.CREATED).body(response);
+            case EMAIL_ALREADY_EXISTS -> ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+            default -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        };
     }
 
-    @PostMapping("/a")
-    public ResponseEntity<String> createUserA() {
-        log.info("Creating user with email: {}", "a");
-        return ResponseEntity.status(HttpStatus.CREATED)
-            .body("User created with email: a");
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponseDto> loginUser(@RequestBody LoginUserDto loginUser) {
+        LoginResponseDto response = userService.loginUser(loginUser);
+        return switch (response.getLoginStatus()) {
+            case SUCCESS -> ResponseEntity.status(HttpStatus.CREATED).body(response);
+            case FAILED -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        };
+
     }
 
     @GetMapping
