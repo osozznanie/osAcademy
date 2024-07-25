@@ -9,6 +9,6 @@ import lombok.Data;
 public class LoginResponseDto {
     private String massage;
     private LoginStatus loginStatus;
-    private String email;
+    private UserDto userDto;
     private String token;
 }
