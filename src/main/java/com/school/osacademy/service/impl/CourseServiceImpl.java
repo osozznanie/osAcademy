@@ -5,10 +5,11 @@ import com.school.osacademy.mapper.CourseMapper;
 import com.school.osacademy.model.Course;
 import com.school.osacademy.repository.CourseRepository;
 import com.school.osacademy.service.CourseService;
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -52,12 +53,11 @@ public class CourseServiceImpl implements CourseService {
         return courseRepository.findById(id).map(courseMapper::toCourseDto);
     }
 
+    //TODO: Fix Page for all app
     @Override
-    public List<CourseDto> getAll() {
-        return courseRepository.findAll()
-            .stream()
-            .map(courseMapper::toCourseDto)
-            .toList();
+    public Page<CourseDto> getAll(Pageable pageable) {
+        Page<Course> coursePage = courseRepository.findAll(pageable);
+        return coursePage.map(courseMapper::toCourseDto);
     }
 
     @Override
