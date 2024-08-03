@@ -60,7 +60,7 @@ public class UserServiceImpl implements UserService {
             return LoginResponseDto.builder()
                 .massage("Login successful")
                 .loginStatus(LoginStatus.SUCCESS)
-                .email(userByEmail.getEmail())
+                .userDto(userMapper.toUserDtoFromModel(userByEmail))
                 .token(jwtTokenUtils.generateToken(userByEmail))
                 .build();
         } else {

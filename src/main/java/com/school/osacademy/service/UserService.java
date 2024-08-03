@@ -27,7 +27,7 @@ public interface UserService {
 
     boolean unverifyUser(String email);
 
-    //TODO use these methods in the future
+    //TODO: use these methods in the future
 //    void changeAvatar(String email, String avatar);
 //    void changeName(String email, String name);
 //    void changePassword(String email, String password);

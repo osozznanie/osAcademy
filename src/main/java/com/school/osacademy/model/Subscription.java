@@ -37,5 +37,5 @@ public class Subscription {
     @Column(name = "subscription_start_date")
     private LocalDate subscriptionStartDate;
     @Column(name = "subscription_end_date")
-    private String amountOfSales;
+    private String subscriptionEndDate;
 }

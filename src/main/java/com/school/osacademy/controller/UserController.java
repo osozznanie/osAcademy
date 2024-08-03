@@ -55,19 +55,12 @@ public class UserController {
             case SUCCESS -> ResponseEntity.status(HttpStatus.CREATED).body(response);
             case FAILED -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         };
-
     }
 
     @GetMapping
     public ResponseEntity<List<UserDto>> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
     }
-
-//    @GetMapping("/{email}")
-//    public ResponseEntity<UserDto> getUserByEmail(@PathVariable String email) {
-//        UserDto userDto = userService.getUserByEmail(email);
-//        return ResponseEntity.ok(userDto);
-//    }
 
     @GetMapping("/email")
     public ResponseEntity<UserDto> getUserByEmail(@RequestBody String email) {
